@@ -1,6 +1,6 @@
 # Erenshor Quest Helper (Enhanced)
 
-A Quality of Life mod for **Erenshor** that adds visual quest markers over NPCs' heads, featuring color coding, an intelligent priority system, and smooth animations.
+A Quality of Life mod for **Erenshor** that adds visual quest markers ⁉️ over NPCs' heads, featuring color coding, an intelligent priority system, and smooth animations.
 
 ## 🌟 What's New in Version 2.0
 
