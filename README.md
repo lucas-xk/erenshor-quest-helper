@@ -13,7 +13,7 @@ The system now distinguishes quest types through color coding:
 *   **Gray:** Quest in progress (accepted but missing required items).
 
 ### 🧠 Intelligent Priority System
-To prevent visual clutter, markers follow a strict display hierarchy. The mod will always prioritize and show only the most important icon:
+Markers follow a strict display hierarchy. The mod will always prioritize and show only the most important icon:
 1.  **Turn In Normal Quest (Yellow)** (Highest Priority)
 2.  **Turn In Repeatable Quest (Blue)**
 3.  **New Normal Quest (Yellow)**
