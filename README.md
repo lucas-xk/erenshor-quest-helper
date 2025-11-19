@@ -44,7 +44,7 @@ Markers follow a strict display hierarchy. The mod will always prioritize and sh
 
 ## 📥 Installation
 
-1. Download and install [BepInEx](https://github.com/BepInEx/BepInEx) for Erenshor (if you haven't already).
+1. Download and install [BepInEx](https://github.com/BepInEx/BepInEx) (if you haven't already).
 2. Download the `quest-helper.dll` file from the [Releases](https://github.com/lucas-xk/erenshor-quest-helper/releases) tab.
 3. Drop the file into your plugins folder: `\BepInEx\plugins\`.
 4. Done!
