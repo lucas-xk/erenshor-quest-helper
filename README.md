@@ -25,7 +25,7 @@ Markers follow a strict display hierarchy. The mod will always prioritize and sh
 ### ✨ Quality of Life Improvements
 *   **Single File Installation:** No need to move image folders manually. All assets are now **embedded resources** within the DLL.
 *   **Floating Animation:** Icons now feature a smooth bobbing animation to feel more integrated into the game world.
-*   **Scale & Position:** Markers have been resized and repositioned to sit closer to the NPC's head for a cleaner look.
+*   **Scale & Position:** Markers have been resized for a cleaner look.
 *   **Stability Fixes:** Added comprehensive **Null Checks** to prevent console errors or crashes when encountering NPCs with empty quest lists.
 
 ---
