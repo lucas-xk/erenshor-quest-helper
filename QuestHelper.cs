@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace questhelper
 {
-    [BepInPlugin("lucasxk.erenshor.questhelper", "Quest Helper", "2.1.0")]
+    [BepInPlugin("lucasxk.erenshor.questhelper", "Quest Helper", "2.2.0")]
     public class QuestHelper : BaseUnityPlugin
     {
         private Texture2D _texYellowExclamation;
@@ -18,65 +18,35 @@ namespace questhelper
 
         public const float QuestMarkerRadius = 70f;
 
+        private float _checkInterval = 1f;
+        private float _nextCheckTime = 0f;
+
         private void Awake()
         {
             LoadTextures();
         }
-        
-        private void OnDestroy()
+
+        private void Update()
         {
-            var allCharacters = GameObject.FindObjectsOfType<Character>();
-            foreach (var character in allCharacters)
-            {
-                var marker = character.transform.Find("QuestMarkerWorldUI");
-                if (marker != null) Destroy(marker.gameObject);
-            }
+            if (Time.time < _nextCheckTime)
+                return;
+
+            _nextCheckTime = Time.time + _checkInterval;
+
+            CheckQuestMarkers();
         }
 
-        private void LoadTextures()
-        {
-            _texYellowExclamation = LoadImageFromResource("questhelper.Resources.quest-available.png");
-            _texYellowQuestion = LoadImageFromResource("questhelper.Resources.quest-complete.png");
-
-            if (_texYellowExclamation != null)
-                _texBlueExclamation = GenerateColoredVersion(_texYellowExclamation, 0.6f, 1f);
-
-            if (_texYellowQuestion != null)
-            {
-                _texBlueQuestion = GenerateColoredVersion(_texYellowQuestion, 0.6f, 1f);
-                _texGreyQuestion = GenerateColoredVersion(_texYellowQuestion, 0f, 0.5f);
-            }
-        }
-
-        private Texture2D GenerateColoredVersion(Texture2D original, float targetHue, float valueMultiplier)
-        {
-            Texture2D newTex = new Texture2D(original.width, original.height, original.format, false);
-            Color[] pixels = original.GetPixels();
-
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                Color c = pixels[i];
-                if (c.a <= 0.01f) { pixels[i] = c; continue; }
-                Color.RGBToHSV(c, out float h, out float s, out float v);
-
-                if (targetHue <= 0.01f && valueMultiplier < 0.9f) s = 0f; // gray mode
-                else if (s > 0.1f) h = targetHue; // blue mode
-
-                v *= valueMultiplier;
-                pixels[i] = Color.HSVToRGB(h, s, v);
-                pixels[i].a = c.a;
-            }
-            newTex.SetPixels(pixels);
-            newTex.Apply();
-            return newTex;
-        }
-
-        private void OnGUI()
+        private void CheckQuestMarkers()
         {
             if (GameData.PlayerControl == null || GameData.InCharSelect) return;
-            if (_texYellowExclamation == null || _texYellowQuestion == null) LoadTextures();
 
-            Collider[] hitColliders = Physics.OverlapSphere(GameData.PlayerControl.transform.position, QuestMarkerRadius);
+            if (_texYellowExclamation == null || _texYellowQuestion == null)
+                LoadTextures();
+
+            Collider[] hitColliders = Physics.OverlapSphere(
+                GameData.PlayerControl.transform.position,
+                QuestMarkerRadius
+            );
 
             foreach (var collider in hitColliders)
             {
@@ -167,7 +137,7 @@ namespace questhelper
                     }
                 }
 
-            ApplyMarker:
+                ApplyMarker:
                 if (finalType != QuestMarker.Type.None && finalTexture != null)
                 {
                     AttachMarkerToCharacter(character, finalTexture, finalType);
@@ -177,6 +147,67 @@ namespace questhelper
                     var marker = character.transform.Find("QuestMarkerWorldUI");
                     if (marker != null) Destroy(marker.gameObject);
                 }
+            }
+        }
+
+        private void LoadTextures()
+        {
+            _texYellowExclamation = LoadImageFromResource("questhelper.Resources.quest-available.png");
+            _texYellowQuestion = LoadImageFromResource("questhelper.Resources.quest-complete.png");
+
+            if (_texYellowExclamation != null)
+                _texBlueExclamation = GenerateColoredVersion(_texYellowExclamation, 0.6f, 1f);
+
+            if (_texYellowQuestion != null)
+            {
+                _texBlueQuestion = GenerateColoredVersion(_texYellowQuestion, 0.6f, 1f);
+                _texGreyQuestion = GenerateColoredVersion(_texYellowQuestion, 0f, 0.5f);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            var allCharacters = GameObject.FindObjectsOfType<Character>();
+            foreach (var character in allCharacters)
+            {
+                var marker = character.transform.Find("QuestMarkerWorldUI");
+                if (marker != null) Destroy(marker.gameObject);
+            }
+        }
+
+        private Texture2D GenerateColoredVersion(Texture2D original, float targetHue, float valueMultiplier)
+        {
+            Texture2D newTex = new Texture2D(original.width, original.height, original.format, false);
+            Color[] pixels = original.GetPixels();
+
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                Color c = pixels[i];
+                if (c.a <= 0.01f) { pixels[i] = c; continue; }
+                Color.RGBToHSV(c, out float h, out float s, out float v);
+
+                if (targetHue <= 0.01f && valueMultiplier < 0.9f) s = 0f; // gray mode
+                else if (s > 0.1f) h = targetHue; // blue mode
+
+                v *= valueMultiplier;
+                pixels[i] = Color.HSVToRGB(h, s, v);
+                pixels[i].a = c.a;
+            }
+            newTex.SetPixels(pixels);
+            newTex.Apply();
+            return newTex;
+        }
+
+        private void OnGUI()
+        {
+            if (GameData.PlayerControl == null || GameData.InCharSelect) return;
+            if (_texYellowExclamation == null || _texYellowQuestion == null) LoadTextures();
+
+            Collider[] hitColliders = Physics.OverlapSphere(GameData.PlayerControl.transform.position, QuestMarkerRadius);
+
+            foreach (var collider in hitColliders)
+            {
+                
             }
         }
 
@@ -399,15 +430,6 @@ namespace questhelper
         {
             // saves initial position from AttachMarkerToCharacter
             _initialPos = transform.localPosition;
-        }
-
-        private void Update()
-        {
-            // calculates the new height
-            float newY = _initialPos.y + (Mathf.Sin(Time.time * _bobSpeed) * _bobHeight);
-
-            // Applies keeping the original X and Z values
-            transform.localPosition = new Vector3(_initialPos.x, newY, _initialPos.z);
         }
     }
 }
