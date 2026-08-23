@@ -431,5 +431,14 @@ namespace questhelper
             // saves initial position from AttachMarkerToCharacter
             _initialPos = transform.localPosition;
         }
+
+        private void Update()
+        {
+            // calculates the new height
+            float newY = _initialPos.y + (Mathf.Sin(Time.time * _bobSpeed) * _bobHeight);
+
+            // Applies keeping the original X and Z values
+            transform.localPosition = new Vector3(_initialPos.x, newY, _initialPos.z);
+        }
     }
 }
